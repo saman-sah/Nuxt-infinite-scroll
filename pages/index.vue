@@ -1,19 +1,30 @@
 <template>
-  <h1 class="h1 text-red-600">Home page</h1>
+ <div ref="el" class="flex flex-col gap-2 p-4 w-300px h-300px max-h-[300px] m-auto overflow-y-scroll bg-gray-500/5 rounded">
+    <div v-for="item in data" :key="item" class="h-15 bg-gray-500/5 rounded p-3">
+      {{ item }}
+    </div>
+  </div>
+  <hr class="my-10">
+  <Suspense>
+    <Users />
+  </Suspense>
 </template>
 
 <script setup>
-const limit = 10;
-const skip = 0;
-const data = await $fetch('/api/user?limit='+limit+'&skip='+skip )
-console.log(data.users);
 
-// const element = document.documentElement
-// const clientHeight = element.clientHeight
-// const scrollHeight = element.scrollHeight
-// const scrollTop = element.scrollTop
+import { useInfiniteScroll } from '@vueuse/core'
 
-// if(scrollTop + clientHeight >= scrollHeight) {
-//   // Call Api for more data
-// }
+const el = ref(null)
+const data = ref([1])
+
+useInfiniteScroll(
+  el,
+  () => {
+    const length = data.value.length + 1
+    console.log('add new data');
+    data.value.push(...Array.from({ length: 5 }, (_, i) => length + i))
+  },
+  { distance: 10 },
+)
+
 </script>
